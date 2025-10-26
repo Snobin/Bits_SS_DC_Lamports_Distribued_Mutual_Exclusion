@@ -1,28 +1,15 @@
-// ==================== FILE 2: lamport/Request.java ====================
 package lamport;
 
+import java.io.Serial;
 import java.io.Serializable;
-import java.util.Objects;
 
 /**
  * Represents a Critical Section request in Lamport's algorithm
  * Implements Comparable for priority queue ordering based on (timestamp, nodeId)
  */
-public class Request implements Comparable<Request>, Serializable {
+public record Request(int nodeId, int timestamp) implements Comparable<Request>, Serializable {
+    @Serial
     private static final long serialVersionUID = 1L;
-
-    public final int nodeId;
-    public final int timestamp;
-
-    /**
-     * Create a new CS request
-     * @param nodeId ID of the requesting node
-     * @param timestamp Logical timestamp of the request
-     */
-    public Request(int nodeId, int timestamp) {
-        this.nodeId = nodeId;
-        this.timestamp = timestamp;
-    }
 
     /**
      * Compare requests for priority queue ordering
@@ -38,14 +25,8 @@ public class Request implements Comparable<Request>, Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Request)) return false;
-        Request other = (Request) obj;
+        if (!(obj instanceof Request other)) return false;
         return this.nodeId == other.nodeId && this.timestamp == other.timestamp;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(nodeId, timestamp);
     }
 
     @Override
