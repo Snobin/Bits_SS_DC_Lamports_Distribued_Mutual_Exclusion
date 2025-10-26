@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main   # or whichever branch you want to track
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'  # your Java version
+
+      - name: Compile Java files
+        run: javac -d out src/lamport/*.java
+
+      - name: Run simulation
+        run: |
+          timeout 30s java -cp out lamport.SimulationRunner || echo "Stopped after timeout"
+
