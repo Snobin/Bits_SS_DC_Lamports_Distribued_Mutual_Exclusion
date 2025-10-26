@@ -1,4 +1,3 @@
-// ==================== FILE 3: lamport/Node.java ====================
 package lamport;
 
 import java.rmi.RemoteException;
@@ -14,14 +13,14 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Uses Java RMI for remote procedure calls between nodes
  */
 public class Node implements NodeService {
-    private int nodeId;
-    private int numNodes;
-    private AtomicInteger logicalClock;
-    private PriorityBlockingQueue<Request> requestQueue;
-    private Set<Integer> replySet;
-    private Map<Integer, NodeService> peers;
+    private final int nodeId;
+    private final int numNodes;
+    private final AtomicInteger logicalClock;
+    private final PriorityBlockingQueue<Request> requestQueue;
+    private final Set<Integer> replySet;
+    private final Map<Integer, NodeService> peers;
     private boolean inCS;
-    private Random random;
+    private final Random random;
 
     public Node(int nodeId, int numNodes) {
         this.nodeId = nodeId;
@@ -105,7 +104,7 @@ public class Node implements NodeService {
         updateClock(timestamp);
 
         synchronized (requestQueue) {
-            requestQueue.removeIf(req -> req.nodeId == senderId);
+            requestQueue.removeIf(req -> req.nodeId() == senderId);
             System.out.println("[Node " + nodeId + "] Received RELEASE from Node " +
                     senderId + " with timestamp " + timestamp);
             requestQueue.notifyAll();
@@ -210,7 +209,7 @@ public class Node implements NodeService {
         int releaseTimestamp = incrementClock();
 
         synchronized (requestQueue) {
-            requestQueue.removeIf(req -> req.nodeId == nodeId);
+            requestQueue.removeIf(req -> req.nodeId() == nodeId);
         }
 
         synchronized (replySet) {

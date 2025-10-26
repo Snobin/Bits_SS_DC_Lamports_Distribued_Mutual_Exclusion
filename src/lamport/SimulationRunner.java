@@ -5,13 +5,14 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 /**
  * Utility class to run multiple nodes for testing Lamport's algorithm
  * Can run nodes as separate processes or in separate threads
  */
 public class SimulationRunner {
-
+    private static final Logger logger = Logger.getLogger(SimulationRunner.class.getName());
     /**
      * Run simulation with specified number of nodes
      * @param args Optional: number of nodes (default 3)
@@ -23,15 +24,15 @@ public class SimulationRunner {
             numNodes = Integer.parseInt(args[0]);
         }
 
-        System.out.println("===========================================");
-        System.out.println("Lamport's Distributed Mutual Exclusion");
-        System.out.println("Starting simulation with " + numNodes + " nodes");
-        System.out.println("===========================================\n");
+        logger.info("===========================================");
+        logger.info("Lamport's Distributed Mutual Exclusion");
+        logger.log(java.util.logging.Level.INFO, "Starting simulation with {0} nodes", numNodes);
+        logger.info("===========================================\n");
 
-        System.out.println("Cleaning up any existing RMI registries...");
+        logger.info("Cleaning up any existing RMI registries...");
         cleanupPorts();
 
-        System.out.println("Running nodes in separate threads...\n");
+        logger.info("Running nodes in separate threads...\n");
         runInThreads(numNodes);
     }
 
@@ -47,7 +48,7 @@ public class SimulationRunner {
                 for (String name : names) {
                     try {
                         registry.unbind(name);
-                        System.out.println("Cleaned up: " + name + " on port " + (basePort + i));
+                        logger.log(java.util.logging.Level.INFO, "Cleaned up: {0} on port {1}", new Object[]{name, basePort + i});
                     } catch (Exception e) {
                         // Ignore
                     }
@@ -89,21 +90,21 @@ public class SimulationRunner {
             }
         }
 
-        System.out.println("All " + numNodes + " nodes started!\n");
-        System.out.println("Waiting for nodes to initialize and connect...\n");
+        logger.log(java.util.logging.Level.INFO, "All {0} nodes started!\n", numNodes);
+        logger.info("Waiting for nodes to initialize and connect...\n");
 
         // Wait for all threads to complete
         for (int i = 0; i < threads.size(); i++) {
             try {
                 threads.get(i).join();
-                System.out.println("Node " + i + " completed");
+                logger.log(java.util.logging.Level.INFO, "Node {0} completed", i);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
-        System.out.println("\n===========================================");
-        System.out.println("All nodes completed successfully!");
-        System.out.println("===========================================");
+        logger.info("\n===========================================");
+        logger.info("All nodes completed successfully!");
+        logger.info("===========================================");
     }
 }
