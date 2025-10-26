@@ -1,4 +1,3 @@
-// ==================== FILE 2: lamport/Request.java ====================
 package lamport;
 
 import java.io.Serial;
